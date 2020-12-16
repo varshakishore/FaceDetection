@@ -1,0 +1,6 @@
+deepfeatinterp/images/
+deepfeatinterp/datasets/
+*.pyc
+deepfeatinterp/__pycache__/
+deepfeatinterp/.ipynb_checkpoints/
+.ipynb_checkpoints/
