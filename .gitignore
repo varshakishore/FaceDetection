@@ -119,3 +119,9 @@ dmypy.json
 .DS_store
 datasets
 deepfeatinterp/images/
+
+facenet-pytorch-vggface2/plots/
+facenet-pytorch-vggface2/model_training_checkpoints/
+facenet-pytorch-vggface2/logs/
+facenet-pytorch-vggface2/datasets/*npy
+facenet-pytorch-vggface2/datasets/*csv
