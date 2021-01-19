@@ -7,6 +7,7 @@ import numpy as np
 import pandas as pd
 import os
 from skimage import io
+import torchvision.transforms as Transforms
 
 class getLfwDataset(Dataset):
     """Face Landmarks dataset."""
@@ -70,6 +71,7 @@ class NumpyResize(object):
         Returns:
             np array: resized image
         """
+        print('hi')
         if not isinstance(img, Image.Image):
             img = Image.fromarray(img)
         print("resize done")
