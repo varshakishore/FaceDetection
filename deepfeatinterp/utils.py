@@ -6,6 +6,9 @@ from __future__ import print_function
 import numpy
 import imageutils
 import alignface
+from torchvision import datasets, transforms
+import torch
+import PIL.Image
 
 def image_feed(S,image_dims):
   '''
@@ -17,6 +20,16 @@ def image_feed(S,image_dims):
       yield imageutils.resize(I,tuple(image_dims))
     else:
       yield I
+    
+def image_feed_transform(S, transform_test):
+  '''
+  Given a list of file paths and a 2-tuple of (H, W), yields H x W x 3 images.
+  '''
+  for x in S:
+    img=PIL.Image.open(x)
+    img=img.convert('RGB')    
+    print("im")
+    yield transform_test(img)
 
 def warped_image_feed(S,MP,image_dims):
   '''
