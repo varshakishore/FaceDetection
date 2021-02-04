@@ -144,7 +144,8 @@ elif args.model == "inceptionresnetv1-casia-webface-pretrained":
 elif args.model == "resnet18":
     model = resnet18(num_classes=len(trainset.class_to_idx)).to(device)
 elif args.model == "resnet18-imagenet-pretrained":
-    model = resnet18(num_classes=len(trainset.class_to_idx), pretrained=True).to(device)
+    model = resnet18(pretrained=True).to(device)
+    model.fc = torch.nn.Linear(512, len(trainset.class_to_idx)).to(device)
 
 
 optimizer = optim.Adam(model.parameters(), lr=args.lr)
