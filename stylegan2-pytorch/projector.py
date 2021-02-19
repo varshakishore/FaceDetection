@@ -120,6 +120,9 @@ if __name__ == "__main__":
         help="allow to use distinct latent codes to each layers",
     )
     parser.add_argument(
+        "--output_folder", type=str, default="results/", help="path to the output"
+    )
+    parser.add_argument(
         "files", metavar="FILES", nargs="+", help="path to image files to be projected"
     )
 
@@ -245,6 +248,6 @@ if __name__ == "__main__":
 
         img_name = os.path.splitext(os.path.basename(input_name))[0] + "-project.png"
         pil_img = Image.fromarray(img_ar[i])
-        pil_img.save("results/"+img_name)
+        pil_img.save(args.output_folder+img_name)
 
-    torch.save(result_file, "results/"+filename)
+    torch.save(result_file, args.output_folder+filename)

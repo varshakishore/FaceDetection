@@ -251,10 +251,12 @@ if __name__ == "__main__":
                         )
                     )
                 
+                loss = None
                 del loss
 
                 img_gen, _ = g_ema([latent_path[-1]], input_is_latent=True, noise=noises)
                 
+                g_ema = None
                 del g_ema
 
 #                 filename = os.path.splitext(os.path.basename(args.files[0]))[0] + ".pt"
@@ -279,6 +281,9 @@ if __name__ == "__main__":
 
                     torch.save(result_file, "/home/vk352/FaceDetection/datasets/celeba/gan/"+folder+f'/vectors{i_file}.pt')
                 
+                latent_in = None
                 del latent_in
                 for noise in noises:
+                    noise = None
                     del noise
+                torch.cuda.empty_cache()
