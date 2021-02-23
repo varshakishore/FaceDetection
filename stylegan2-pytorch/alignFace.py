@@ -22,6 +22,7 @@ import glob
 import scipy
 import scipy.ndimage
 import dlib
+import argparse
 
 
 # download model from: http://dlib.net/files/shape_predictor_68_face_landmarks.dat.bz2
@@ -137,3 +138,18 @@ def align_face(filepath):
 
     # Save aligned image.
     return img
+
+parser = argparse.ArgumentParser(
+    description="Image Cropping"
+)
+parser.add_argument(
+    "--directory", type=str, required=True, help="path to the input image"
+)
+parser.add_argument(
+    "--input_name", type=str, required=True, help="the name of the input image"
+)
+args = parser.parse_args()
+
+file_name = args.directory + "/" + args.input_name + ".jpg"
+cropped_img = align_face(file_name)
+cropped_img.save(args.directory + "/" + args.input_name + "_cropped.jpg")

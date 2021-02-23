@@ -123,6 +123,12 @@ if __name__ == "__main__":
         "--output_folder", type=str, default="results/", help="path to the output"
     )
     parser.add_argument(
+        "--mask",
+        type=str,
+        default=None,
+        help="the mask range to mask out the face [w1, w2, h1, h2]",
+    )
+    parser.add_argument(
         "files", metavar="FILES", nargs="+", help="path to image files to be projected"
     )
 
@@ -153,6 +159,10 @@ if __name__ == "__main__":
     g_ema = Generator(args.size, 512, 8)
     g_ema.load_state_dict(torch.load(args.ckpt)["g_ema"], strict=False)
     g_ema.eval()
+    
+    for param in g_ema.parameters():
+        param.requires_grad = False
+    
     g_ema = g_ema.to(device)
 
     with torch.no_grad():
@@ -185,6 +195,16 @@ if __name__ == "__main__":
 
     pbar = tqdm(range(args.step))
     latent_path = []
+    
+    base_size = 256
+    if args.mask is not None:
+        mask = torch.zeros(imgs.shape).to(device)
+        h1, h2, w1, w2 = args.mask.split("_")
+        h1, h2, w1, w2 = int(float(h1) / args.size * base_size), int(float(h2) / args.size * base_size), int(float(w1) / args.size * base_size), int(float(w2) / args.size * base_size)
+        mask[:, :, :w1] = 1
+        mask[:, :, w2:] = 1
+        mask[:, :, :, :h1] = 1
+        mask[:, :, :, h2:] = 1
 
     for i in pbar:
         t = i / args.step
@@ -205,11 +225,17 @@ if __name__ == "__main__":
             )
             img_gen = img_gen.mean([3, 5])
 
-        p_loss = percept(img_gen, imgs).sum()
-        n_loss = noise_regularize(noises)
-        mse_loss = F.mse_loss(img_gen, imgs)
-
-        loss = p_loss + args.noise_regularize * n_loss + args.mse * mse_loss
+            
+        if args.mask is not None:
+            mse_loss = F.mse_loss(img_gen * mask, imgs * mask)
+            n_loss = noise_regularize(noises)
+            loss = args.noise_regularize * n_loss + args.mse * mse_loss
+            p_loss = torch.zeros([1])
+        else:
+            p_loss = percept(img_gen, imgs).sum()
+            n_loss = noise_regularize(noises)
+            mse_loss = F.mse_loss(img_gen, imgs)
+            loss = p_loss + args.noise_regularize * n_loss + args.mse * mse_loss
 
         optimizer.zero_grad()
         loss.backward()
@@ -246,7 +272,10 @@ if __name__ == "__main__":
             "path": latent_path
         }
 
-        img_name = os.path.splitext(os.path.basename(input_name))[0] + "-project.png"
+        if args.mask is not None:
+            img_name = os.path.splitext(os.path.basename(input_name))[0] + "_mask_" + args.mask + "-project.jpg"
+        else:
+            img_name = os.path.splitext(os.path.basename(input_name))[0] + "-project.jpg"
         pil_img = Image.fromarray(img_ar[i])
         pil_img.save(args.output_folder+img_name)
 

@@ -125,3 +125,7 @@ facenet-pytorch-vggface2/model_training_checkpoints/
 facenet-pytorch-vggface2/logs/
 facenet-pytorch-vggface2/datasets/*npy
 facenet-pytorch-vggface2/datasets/*csv
+face_encryption/examples/
+face_encryption/examples_auto_dst/
+stylegan2-pytorch/results/
+stylegan2-pytorch/stylegan2-ffhq-config-f.pt
