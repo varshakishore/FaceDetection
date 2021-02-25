@@ -269,7 +269,6 @@ if __name__ == "__main__":
             "img": img_gen[i],
             "latent": latent_in[i],
             "noise": noise_single,
-            "path": latent_path
         }
 
         if args.mask is not None:

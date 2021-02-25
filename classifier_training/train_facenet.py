@@ -1,6 +1,6 @@
 from facenet_pytorch import MTCNN, InceptionResnetV1, fixed_image_standardization, training
 import torch
-from torch.utils.data import DataLoader, SubsetRandomSampler
+from torch.utils.data import DataLoader, SubsetRandomSampler, ConcatDataset
 from torch import optim
 from torch.optim.lr_scheduler import MultiStepLR
 from torch.utils.tensorboard import SummaryWriter
@@ -105,7 +105,12 @@ if args.dataset in ["vggface2", "webface"]:
     )
 elif args.dataset == "celeba":
     data_dir = "/scratch/rw565/CelebA/Img_cropped"
-    trainset = datasets.ImageFolder(os.path.join(data_dir, "train"), transform=transform_train)
+    data_dir_gan = "/home/vk352/FaceDetection/datasets/celeba/gan"
+    
+    trainset_og = datasets.ImageFolder(os.path.join(data_dir, "train"), transform=transform_train)
+    trainset_gan = datasets.ImageFolder(data_dir_gan, transform=transform_train)
+    trainset = ConcatDataset([trainset_og, trainset_gan])
+    
     testset = datasets.ImageFolder(os.path.join(data_dir, "test"), transform=transform_test)
     train_loader = torch.utils.data.DataLoader(trainset, batch_size=batch_size, shuffle=True, num_workers=2)
     val_loader = torch.utils.data.DataLoader(testset, batch_size=batch_size, shuffle=False, num_workers=2)
@@ -132,7 +137,7 @@ if args.model == "inceptionresnetv1":
 elif args.model == "inceptionresnetv1-vggface2-pretrained":
     model = InceptionResnetV1(
         classify=True,
-        num_classes=len(trainset.class_to_idx),
+        num_classes=len(testset.class_to_idx),
         pretrained='vggface2'
     ).to(device)
 elif args.model == "inceptionresnetv1-casia-webface-pretrained":
@@ -161,12 +166,12 @@ writer.iteration, writer.interval = 0, 10
 
 print('\n\nInitial')
 print('-' * 10)
-model.eval()
-training.pass_epoch(
-    model, loss_fn, val_loader,
-    batch_metrics=metrics, show_running=True, device=device,
-    writer=writer
-)
+# model.eval()
+# training.pass_epoch(
+#     model, loss_fn, val_loader,
+#     batch_metrics=metrics, show_running=True, device=device,
+#     writer=writer
+# )
 
 first_drop, second_drop = False, False
 
@@ -197,6 +202,6 @@ for epoch in range(epochs):
     )
     
     state = {"epoch": epoch, "model": model.state_dict()}
-    torch.save(state, "checkpoint/{}/models/{}_{}_{}_{}.txt".format(args.dataset, args.model, args.batch_size, args.lr, args.seed))
+    torch.save(state, "checkpoint/{}/models/{}_{}_{}_{}_gan.pt".format(args.dataset, args.model, args.batch_size, args.lr, args.seed))
 
 writer.close()
