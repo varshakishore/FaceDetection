@@ -37,6 +37,8 @@ gpu_id = "0"
 parser = argparse.ArgumentParser()
 parser.add_argument("-flip", "--flip", help="flip directory order",
                     action="store_true")
+parser.add_argument("-subfolder", "--subfolder", help="directory order",
+                    type=int)
 args = parser.parse_args()
 
 
@@ -59,9 +61,19 @@ path_gan = '/home/vk352/FaceDetection/datasets/celeba/gan_id_test'
 folders_gan = listdir(path_gan)
 
 folders = sorted(listdir(path))
-if args.flip:
-    folders = folders[::-1]
-folders = folders[:len(folders)//2]
+# if args.flip:
+#     folders = folders[::-1]
+# folders = folders[:len(folders)//2]
+
+folders = sorted(listdir(path))
+if args.subfolder == 0:
+    folders = folders[:len(folders)//4]
+elif args.subfolder == 1:
+    folders = folders[len(folders)//4:len(folders)//2]
+elif args.subfolder == 2:
+    folders = folders[len(folders)//2:len(folders)//4 * 3]
+elif args.subfolder == 3:
+    folders = folders[len(folders)//4 * 3:]
 
 for folder in folders:
     if folder in folders_gan:
