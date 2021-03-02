@@ -71,7 +71,7 @@ for folder in folders:
     output_dir = f'/home/vk352/FaceDetection/datasets/celeba/gan_id_test/{folder}'
     os.makedirs(output_dir, exist_ok=True) 
     for (dirpath, dirnames, filenames) in walk(join(path, folder)):
-        filenames = sorted(filenames)[:10]
+        filenames = sorted(filenames)
 
         for img_idx in tqdm(range(len(filenames)), leave=False):
     #         image_path = image_list[img_idx]
@@ -91,7 +91,7 @@ for folder in folders:
       # Save results.
     if (len(latent_codes)==1):
         np.save(f'{output_dir}/inverted_codes.npy', np.expand_dims(latent_codes, axis=0))
-    else:
+    elif (len(latent_codes)>1):
         np.save(f'{output_dir}/inverted_codes.npy', np.concatenate(latent_codes, axis=0))
 
 #     if visualizer:
