@@ -55,13 +55,17 @@ image_size = inverter.G.resolution
 
   # Invert images.
 path = '/home/vk352/FaceDetection/datasets/celeba/Img_cropped/test'
+path_gan = '/home/vk352/FaceDetection/datasets/celeba/gan_id_test'
+folders_gan = listdir(path_gan)
 
 folders = sorted(listdir(path))
 if args.flip:
-  folders = folders[::-1]
+    folders = folders[::-1]
 folders = folders[:len(folders)//2]
 
 for folder in folders:
+    if folder in folders_gan:
+        continue
     latent_codes = []
     print(folder)
     output_dir = f'/home/vk352/FaceDetection/datasets/celeba/gan_id_test/{folder}'
@@ -85,8 +89,10 @@ for folder in folders:
 #                     visualizer.set_cell(img_idx, viz_idx + 2, image=viz_img)
 
       # Save results.
-    np.save(f'{output_dir}/inverted_codes.npy',
-          np.concatenate(latent_codes, axis=0))
+    if (len(latent_codes)==1):
+        np.save(f'{output_dir}/inverted_codes.npy', np.expand_dims(latent_codes, axis=0))
+    else:
+        np.save(f'{output_dir}/inverted_codes.npy', np.concatenate(latent_codes, axis=0))
 
 #     if visualizer:
 #         visualizer.save(f'{output_dir}/inversion.html')
