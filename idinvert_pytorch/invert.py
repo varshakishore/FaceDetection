@@ -98,7 +98,7 @@ def main():
     latent_codes.append(code)
     save_image(f'{output_dir}/{image_name}_ori.png', image)
     save_image(f'{output_dir}/{image_name}_enc.png', viz_results[1])
-    save_image(f'{output_dir}/{image_name}_inv.jpg', viz_results[-1])
+    save_image(f'{output_dir}/{image_name}_inv.png', viz_results[-1])
     visualizer.set_cell(img_idx, 0, text=image_name)
     visualizer.set_cell(img_idx, 1, image=image)
     for viz_idx, viz_img in enumerate(viz_results[1:]):
