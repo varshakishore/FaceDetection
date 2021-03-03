@@ -37,6 +37,8 @@ gpu_id = "0"
 parser = argparse.ArgumentParser()
 parser.add_argument("-flip", "--flip", help="flip directory order",
                     action="store_true")
+parser.add_argument("-part", "--part", help="which part",
+                    type=int)
 args = parser.parse_args()
 
 
@@ -54,21 +56,23 @@ image_size = inverter.G.resolution
 
 
   # Invert images.
-path = '/home/vk352/FaceDetection/datasets/celeba/Img_cropped/test'
-path_gan = '/home/vk352/FaceDetection/datasets/celeba/gan_id_test'
-folders_gan = listdir(path_gan)
+path = '/home/vk352/FaceDetection/datasets/celeba/Img_cropped/train'
+path_gan = '/home/vk352/FaceDetection/datasets/celeba/gan_id'
 
 folders = sorted(listdir(path))
-if args.flip:
-    folders = folders[::-1]
-folders = folders[:len(folders)//2]
+# if args.flip:
+#     folders = folders[::-1]
+div = len(folders)//4
+folders = folders[args.part*div:(args.part+1)*div]
+folders = folders[::-1]
 
 for folder in folders:
+    folders_gan = listdir(path_gan)
     if folder in folders_gan:
         continue
     latent_codes = []
     print(folder)
-    output_dir = f'/home/vk352/FaceDetection/datasets/celeba/gan_id_test/{folder}'
+    output_dir = f'/home/vk352/FaceDetection/datasets/celeba/gan_id/{folder}'
     os.makedirs(output_dir, exist_ok=True) 
     for (dirpath, dirnames, filenames) in walk(join(path, folder)):
         filenames = sorted(filenames)
