@@ -38,6 +38,7 @@ parser = argparse.ArgumentParser()
 parser.add_argument("-flip", "--flip", help="flip directory order",
                     action="store_true")
 parser.add_argument("-part", "--part", help="which part",
+parser.add_argument("-subfolder", "--subfolder", help="directory order",
                     type=int)
 args = parser.parse_args()
 
@@ -65,6 +66,7 @@ folders = sorted(listdir(path))
 div = len(folders)//4
 folders = folders[args.part*div:(args.part+1)*div]
 folders = folders[::-1]
+# folders = folders[:len(folders)//2]
 
 for folder in folders:
     folders_gan = listdir(path_gan)
