@@ -37,7 +37,7 @@ gpu_id = "0"
 parser = argparse.ArgumentParser()
 parser.add_argument("-flip", "--flip", help="flip directory order",
                     action="store_true")
-parser.add_argument("-part", "--part", help="which part",
+parser.add_argument("-part", "--part", help="which part", type=int)
 parser.add_argument("-subfolder", "--subfolder", help="directory order",
                     type=int)
 args = parser.parse_args()
