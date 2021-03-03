@@ -43,7 +43,7 @@ parser.add_argument("-subfolder", "--subfolder", help="directory order",
 args = parser.parse_args()
 
 
-os.environ["CUDA_VISIBLE_DEVICES"] = gpu_id
+#os.environ["CUDA_VISIBLE_DEVICES"] = gpu_id
 
 inverter = StyleGANInverter(
   model_name,
