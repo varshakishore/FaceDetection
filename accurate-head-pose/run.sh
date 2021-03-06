@@ -1,0 +1,1 @@
+python test_hopenet.py --gpu 0 --data_dir dataset/AFLW2000 --filename_list tools/AFLW2000_filename_filtered.txt --snapshot model/AFLW2000.pkl --dataset AFLW2000 --save_viz True
