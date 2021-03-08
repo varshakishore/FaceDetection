@@ -199,8 +199,23 @@ def check_points(img,points):
     return False
 
 
-def face_swap(src_face, dst_face, src_points, dst_points, dst_shape, dst_img, args, end=48):
+def face_swap(src_face, dst_face, src_points, dst_points, dst_shape, dst_img, args, end=48, inpainting="None"):
     h, w = dst_face.shape[:2]
+    if end == 32:
+        additional_src_points = np.vstack([src_points[27:31].mean(0),
+                                 src_points[31:36].mean(0),
+                                 src_points[36:42].mean(0),
+                                 src_points[42:48].mean(0),
+                                 src_points[48:68].mean(0)
+                                ])
+        additional_dst_points = np.vstack([dst_points[27:31].mean(0),
+                                 dst_points[31:36].mean(0),
+                                 dst_points[36:42].mean(0),
+                                 dst_points[42:48].mean(0),
+                                 dst_points[48:68].mean(0)
+                                ])
+        src_points[27:32] = additional_src_points
+        dst_points[27:32] = additional_dst_points
 
     ## 3d warp
     warped_src_face = warp_image_3d(src_face, src_points[:end], dst_points[:end], (h, w))
@@ -226,6 +241,26 @@ def face_swap(src_face, dst_face, src_points, dst_points, dst_shape, dst_img, ar
     ## Shrink the mask
     kernel = np.ones((10, 10), np.uint8)
     mask = cv2.erode(mask, kernel, iterations=1)
+    
+    if inpainting != "None":
+        mask_dst = mask_from_points((h, w), dst_points[:end])
+        #mask_dst = cv2.erode(mask_dst, kernel, iterations=1)
+        if inpainting == "mean":
+            dst_face[np.nonzero(mask_dst)] = np.median(dst_face[np.nonzero(mask_dst)], 0)
+            print(inpainting)
+        elif inpainting == "cv2":
+            dst_face[np.nonzero(mask_dst)] = 0
+            dst_face = cv2.inpaint(dst_face, mask_dst, 3, cv2.INPAINT_TELEA)
+            print(inpainting)
+        elif inpainting == "black":
+            dst_face[np.nonzero(mask_dst)] = 0
+            print(inpainting)
+        else:
+            print("wrong inpainting mode")
+            exit()
+    else:
+        mask_dist = None
+    
     ##Poisson Blending
     r = cv2.boundingRect(mask)
     center = ((r[0] + int(r[2] / 2), r[1] + int(r[3] / 2)))
