@@ -469,6 +469,31 @@ class AFLW2000(Dataset):
         # 2,000
         return self.length
 
+
+class AFLW2000_BYL(Dataset):
+    def __init__(self, data_dir, transform, image_mode='RGB'):
+        self.data_dir = data_dir
+        self.transform = transform
+        filename_list = os.listdir(data_dir)
+        filename_list_final = []
+        for file in filename_list:
+            if file.endswith('.jpg'):
+                filename_list_final.append(file)
+        self.X_train = filename_list_final
+        self.image_mode = image_mode
+        self.length = len(filename_list_final)
+
+    def __getitem__(self, index):
+        img = Image.open(os.path.join(self.data_dir, self.X_train[index]))
+        img = img.convert(self.image_mode)
+        if self.transform is not None:
+            img = self.transform(img)
+        return img, self.X_train[index]
+
+    def __len__(self):
+        # 2,000
+        return self.length
+
 class AFLW2000_ds(Dataset):
     # AFLW2000 dataset with fixed downsampling
     def __init__(self, data_dir, filename_path, transform, img_ext='.jpg', annot_ext='.mat', image_mode='RGB'):
