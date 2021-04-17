@@ -84,7 +84,7 @@ def up(x):
         # Analytical normalization
         return x
     return nn.functional.interpolate(
-        x, scale_factor=4, mode="nearest")
+        x, scale_factor=2, mode="nearest")
 
 
 class NearestUpsample(nn.Module):
