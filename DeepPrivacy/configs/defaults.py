@@ -143,6 +143,10 @@ generator_criterions = {
     0: dict(
         type=adversarial_loss,
         fake_index=-1
+    ),
+    1: dict(
+        type="BCELogitsPenalty",
+        fake_index=-1
     )
 }
 

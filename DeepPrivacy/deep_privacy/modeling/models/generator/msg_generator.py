@@ -4,6 +4,7 @@ from .. import layers, blocks
 from ..build import GENERATOR_REGISTRY
 from .base import RunningAverageGenerator
 from .gblocks import LatentVariableConcat, UnetSkipConnection
+import pdb
 
 
 class AttrDict(dict):
@@ -34,15 +35,18 @@ class MSGGenerator(RunningAverageGenerator):
         self._unet_cfg = unet
         self.concat_input_mask = self.conv2d_config.conv.type in ["conv", "gconv"]
         self.res2channels = {int(k): v for k, v in conv_size.items()}
+        self.steg_hidden_size = 32
         self._init_decoder()
         self._init_encoder()
+        self._init_steg_decoder()
 
     def _init_encoder(self):
         self.encoder = nn.ModuleList()
         imsize = self.max_imsize
+        # the plus 1 is for adding data
         self.from_rgb = blocks.build_convact(
             self.conv2d_config,
-            in_channels=self._image_channels + self.concat_input_mask*2,
+            in_channels=self._image_channels + self.concat_input_mask*2 + 1,
             out_channels=self.res2channels[imsize],
             kernel_size=1)
         while imsize >= self._min_fmap_resolution:
@@ -93,6 +97,33 @@ class MSGGenerator(RunningAverageGenerator):
             self.rgb_convolutions[str(imsize)] = to_rgb
             imsize *= 2
         self.norm_constant = len(self.rgb_convolutions)
+        
+    def _init_steg_decoder(self):
+        def _conv2d(in_channels, out_channels):
+            return nn.Conv2d(
+                in_channels=in_channels,
+                out_channels=out_channels,
+                kernel_size=3,
+                padding=1
+            )
+        
+        self.steg_layers = [nn.Sequential(
+            _conv2d(3, self.steg_hidden_size),
+            nn.LeakyReLU(inplace=True),
+            nn.BatchNorm2d(self.steg_hidden_size),
+
+            _conv2d(self.steg_hidden_size, self.steg_hidden_size),
+            nn.LeakyReLU(inplace=True),
+            nn.BatchNorm2d(self.steg_hidden_size),
+
+            _conv2d(self.steg_hidden_size, self.steg_hidden_size),
+            nn.LeakyReLU(inplace=True),
+            nn.BatchNorm2d(self.steg_hidden_size),
+
+            _conv2d(self.steg_hidden_size, 1)
+        )]
+
+#         return [self.steg_layers]
 
     def forward_decoder(self, x, mask, batch):
         imsize_start = max(x.shape[-1] // 2, 1)
@@ -119,9 +150,9 @@ class MSGGenerator(RunningAverageGenerator):
                 rgb = rgb + rgb_
         return rgb / self.norm_constant, mask_out
 
-    def forward_encoder(self, x, mask, batch):
+    def forward_encoder(self, x, mask, message, batch):
         if self.concat_input_mask:
-            x = torch.cat((x, mask, 1 - mask), dim=1)
+            x = torch.cat((x, mask, 1 - mask, message), dim=1)
         unet_features = {}
         x, mask = self.from_rgb((x, mask))
         for module in self.encoder:
@@ -129,11 +160,23 @@ class MSGGenerator(RunningAverageGenerator):
             if isinstance(module, blocks.BasicBlock):
                 unet_features[module._resolution] = (x, mask)
         return x, mask, unet_features
+    
+    def forward_steg_decoder(self, x):
+        self.steg_layers[0].to(x.device)
+        x = self.steg_layers[0](x)
+
+        if len(self.steg_layers) > 1:
+            x_list = [x]
+            for layer in self.steg_layers[1:]:
+                x = layer(torch.cat(x_list, dim=1))
+                x_list.append(x)
+
+        return x
 
     def forward(
             self,
             condition,
-            mask, landmarks=None, z=None,
+            mask, message, landmarks=None, z=None,
             **kwargs):
         if z is None:
             z = self.generate_latent_variable(condition)
@@ -142,14 +185,16 @@ class MSGGenerator(RunningAverageGenerator):
             z=z)
         orig_mask = mask
         mask = self._get_input_mask(condition, mask)
-        x, mask, unet_features = self.forward_encoder(condition, mask, batch)
+        x, mask, unet_features = self.forward_encoder(condition, mask, message, batch)
         batch = dict(
             landmarks=landmarks,
             z=z,
             unet_features=unet_features)
         x, mask = self.forward_decoder(x, mask, batch)
         x = condition * orig_mask + (1 - orig_mask) * x
-        return x
+#         pdb.set_trace()
+        fake_decode = self.forward_steg_decoder(x)
+        return x, fake_decode
 
     def load_state_dict(self, state_dict, strict=True):
         if "parameters" in state_dict:

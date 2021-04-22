@@ -12,7 +12,6 @@ def _get_map_location():
 
 
 def load_checkpoint_from_url(model_url: str):
-    print("url:", model_url)
     if model_url is None:
         return None
     return torch.hub.load_state_dict_from_url(
@@ -28,7 +27,6 @@ def load_checkpoint(ckpt_dir_or_file: pathlib.Path) -> dict:
         ckpt_path = ckpt_dir_or_file
     if not ckpt_path.is_file():
         raise FileNotFoundError(f"Did not find path: {ckpt_path}")
-    print("name:", ckpt_path)
     ckpt = torch.load(ckpt_path, map_location=_get_map_location())
     logger.info(f"Loaded checkpoint from {ckpt_path}")
     return ckpt
@@ -47,7 +45,6 @@ def _get_checkpoint_path(
 def get_checkpoint(
         output_dir: str, validation_checkpoint_step: int = None):
     path = _get_checkpoint_path(output_dir, validation_checkpoint_step)
-    print("here path1:", path)
     return load_checkpoint(path)
 
 
@@ -66,6 +63,7 @@ def get_checkpoint_step(output_dir: str, validation_checkpoint_step: int):
         return validation_checkpoint_step
     directory = _get_checkpoint_path(output_dir)
     ckpt_path = get_previous_checkpoints(directory)[0]
+    print(ckpt_path)
     ckpt_path = pathlib.Path(ckpt_path)
     step = ckpt_path.stem.replace("step_", "")
     step = step.replace(".ckpt", "")

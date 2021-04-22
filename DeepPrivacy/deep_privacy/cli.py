@@ -108,7 +108,6 @@ def get_parser() -> argparse.ArgumentParser:
 def main():
     parser = get_parser()
     args = parser.parse_args()    
-    print('model:', args.model)
     anonymizer, cfg = build_anonymizer(
         args.model, opts=args.opts, config_path=args.config_path,
         return_cfg=True)

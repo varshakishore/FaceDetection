@@ -12,7 +12,7 @@ try:
     from apex.optimizers import FusedAdam
 except ImportError:
     pass
-
+import pdb
 
 class LossOptimizer:
 
@@ -139,6 +139,7 @@ class LossOptimizer:
             return {}
         with torch.no_grad():
             fake_data = self.generator.forward_train(**batch)
+        fake_data = [fake_data[0][0]]
         real_scores = self.discriminator(
             **batch, with_pose=True)
 
@@ -173,6 +174,8 @@ class LossOptimizer:
             p.requires_grad = False
         # Forward
         fake_data = self.generator.forward_train(**batch)
+        batch["fake_decode"] = fake_data[0][1]
+        fake_data = [fake_data[0][0]]
         fake_scores = {}
         for idx in self.required_D_index:
             fake_scores[idx] = self.discriminator.forward_fake(

@@ -33,7 +33,6 @@ def generate_pose_channel_images(
     assert batch_size <= 256, \
         f"Overflow error for batch size > 256. Was: {batch_size}"
     if (max_imsize, batch_size) not in batch_indexes.keys():
-        print("here, ",(max_imsize, batch_size))
         batch_indexes[(max_imsize, batch_size)] = torch.cat(
             [torch.ones(num_poses, dtype=torch.long) * k for k in range(batch_size)])
         pose_indexes[(max_imsize, batch_size)] = torch.arange(

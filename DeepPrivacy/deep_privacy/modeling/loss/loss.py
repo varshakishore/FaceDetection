@@ -2,6 +2,8 @@ import torch
 from .build import CRITERION_REGISTRY
 from deep_privacy.modeling import models
 from .adversarial_loss import GanCriterion
+from torch.nn.functional import binary_cross_entropy_with_logits
+import pdb
 
 
 @CRITERION_REGISTRY.register_module
@@ -158,3 +160,19 @@ class L1Loss(GanCriterion):
         return l1_loss, dict(
             l1_loss=l1_loss.detach()
         )
+    
+@CRITERION_REGISTRY.register_module
+class BCELogitsPenalty(GanCriterion):
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+    def g_loss(self, batch):
+        fake = batch["fake_decode"]
+        message = batch["message"]
+        bce_logits_penalty = binary_cross_entropy_with_logits(fake, message)
+        
+        to_log = dict(
+            bce_logits_penalty=bce_logits_penalty.mean().detach()
+        )
+        return bce_logits_penalty.view(-1), to_log
