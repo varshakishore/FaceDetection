@@ -174,7 +174,7 @@ class LossOptimizer:
             p.requires_grad = False
         # Forward
         fake_data = self.generator.forward_train(**batch)
-        batch["fake_decode"] = fake_data[0][1]
+        batch["message_decode"] = fake_data[0][1]
         fake_data = [fake_data[0][0]]
         fake_scores = {}
         for idx in self.required_D_index:

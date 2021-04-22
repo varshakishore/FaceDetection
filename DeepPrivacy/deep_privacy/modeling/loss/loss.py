@@ -168,9 +168,9 @@ class BCELogitsPenalty(GanCriterion):
         super().__init__(*args, **kwargs)
 
     def g_loss(self, batch):
-        fake = batch["fake_decode"]
-        message = batch["message"]
-        bce_logits_penalty = binary_cross_entropy_with_logits(fake, message)
+        message_decode = batch["message_decode"]
+        message_original = batch["message"]
+        bce_logits_penalty = binary_cross_entropy_with_logits(message_decode, message_original)
         
         to_log = dict(
             bce_logits_penalty=bce_logits_penalty.mean().detach()

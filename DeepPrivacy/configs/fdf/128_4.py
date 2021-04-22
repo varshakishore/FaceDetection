@@ -1,6 +1,6 @@
 
 _base_config_ = "base.py"
-model_size = 128
+model_size = 64
 model_url = "http://folk.ntnu.no/haakohu/checkpoints/fdf128_model512.ckpt"
 models = dict(
     scalar_pose_input=True,
@@ -15,7 +15,7 @@ models = dict(
         512: model_size//16
     },
     generator=dict(
-        type="MSGGenerator"),
+        type="MSGGenerator_4"),
     discriminator=dict(
         residual=True,
         scalar_pose_input=False

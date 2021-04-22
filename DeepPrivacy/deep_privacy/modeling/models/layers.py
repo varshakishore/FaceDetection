@@ -79,12 +79,12 @@ class AvgPool2d(nn.AvgPool2d):
         return x, mask
 
 
-def up(x):
+def up(x, scale_factor=2):
     if x.shape[0] == 1 and x.shape[2] == 1 and x.shape[3] == 1:
         # Analytical normalization
         return x
     return nn.functional.interpolate(
-        x, scale_factor=2, mode="nearest")
+        x, scale_factor=scale_factor, mode="nearest")
 
 
 class NearestUpsample(nn.Module):
@@ -93,6 +93,16 @@ class NearestUpsample(nn.Module):
         x, mask, *args = _inp
         x = up(x)
         mask = up(mask)
+        if len(args) > 0:
+            return (x, mask, *args)
+        return x, mask
+
+
+class NearestUpsample_4(nn.Module):
+    def forward(self, _inp):
+        x, mask, *args = _inp
+        x = up(x, scale_factor=4)
+        mask = up(mask, scale_factor=4)
         if len(args) > 0:
             return (x, mask, *args)
         return x, mask
