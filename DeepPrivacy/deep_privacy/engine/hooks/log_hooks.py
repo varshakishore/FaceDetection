@@ -59,6 +59,8 @@ class ImageSaveHook(HookBase):
         g.eval()
         batch = next(iter(self.trainer.dataloader_val))
         z = g.generate_latent_variable(batch["img"]).zero_()
+        shape = batch['img'].shape
+        batch['message'] = torch.empty(shape[0], 1, shape[2], shape[3]).random_(2).to(batch['img'].device)
         with torch.no_grad():
             fake_data_sample = g(**batch,
                                  z=z)
