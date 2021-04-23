@@ -64,7 +64,6 @@ class ImageSaveHook(HookBase):
         with torch.no_grad():
             fake_data_sample = g(**batch,
                                  z=z)
-        import pdb; pdb.set_trace()
         fake_data_sample = fake_data_sample[0]
         g.train()
         return fake_data_sample, batch["img"], batch["condition"]
