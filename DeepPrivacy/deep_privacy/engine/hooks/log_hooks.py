@@ -64,6 +64,8 @@ class ImageSaveHook(HookBase):
         with torch.no_grad():
             fake_data_sample = g(**batch,
                                  z=z)
+        import pdb; pdb.set_trace()
+        fake_data_sample = fake_data_sample[0]
         g.train()
         return fake_data_sample, batch["img"], batch["condition"]
 
@@ -76,10 +78,12 @@ class ImageSaveHook(HookBase):
         g.eval()
         batch = next(iter(self.trainer.dataloader_val))
         batch = {k: v[:8] for k, v in batch.items()}
+        shape = batch['img'].shape
+        batch['message'] = torch.empty(shape[0], 1, shape[2], shape[3]).random_(2).to(batch['img'].device)
         fakes = [batch["condition"].cpu()]
         for i in range(self._n_diverse_samples):
             z = g.generate_latent_variable(batch["img"])
-            fake = g(**batch, z=z)
+            fake, _ = g(**batch, z=z)
             fakes.append(fake.cpu())
         fakes = torch.cat(fakes)
         logger.save_images(
