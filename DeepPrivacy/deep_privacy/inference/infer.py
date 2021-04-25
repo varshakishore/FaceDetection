@@ -116,7 +116,9 @@ def infer_images(
         for idx, batch in enumerate(dl_iter):
             real_data = batch["img"]
             z = truncated_z(real_data, generator.z_shape, truncation_level)
-            fake_data = generator(**batch, z=z)
+#             shape = batch['img'].shape
+#             batch['message'] = torch.empty(shape[0], 1, shape[2], shape[3]).random_(2).to(batch['img'].device)
+            fake_data, _ = generator(**batch, z=z)
             start = idx * batch_size
             end = start + len(real_data)
             real_data = torch_utils.image_to_numpy(real_data, denormalize=True)

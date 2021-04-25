@@ -8,7 +8,7 @@ data_train = dict(
     dataset=dict(
         type=dataset_type,
         dirpath=os.path.join(data_root, "train"),
-        percentage=.001
+        percentage=1.0
     ),
     transforms=[
         dict(type="RandomFlip", flip_ratio=0.5),

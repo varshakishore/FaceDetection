@@ -73,8 +73,8 @@ class Trainer(BaseTrainer):
     def train_step(self):
         self.before_step()
         batch = next(self.dataloader_train)
-        shape = batch['img'].shape
-        batch['message'] = torch.empty(shape[0], 1, shape[2], shape[3]).random_(2).to(batch['img'].device)
+#         shape = batch['img'].shape
+#         batch['message'] = torch.empty(shape[0], 1, shape[2], shape[3]).random_(2).to(batch['img'].device)
 #         pdb.set_trace()
         logger.update_global_step(self.global_step)
         to_log = self.loss_optimizer.step(batch)

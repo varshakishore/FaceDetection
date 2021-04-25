@@ -48,6 +48,8 @@ class FDFDataset(CustomDataset):
 
     def get_item(self, index):
         batch = super().get_item(index)
+        batch["mess"] = 1001
+#         print(batch["mess"])
         landmark = self.landmarks[index]
         batch["landmarks"] = landmark
         return batch

@@ -66,6 +66,8 @@ def fast_collate(batch):
     res = {"img": images, "mask": masks}
     if has_landmark:
         res["landmarks"] = landmarks
+    shape = res['img'].shape
+    res["message"] = torch.empty(shape[0], 1, shape[2], shape[3]).random_(2)
     return res
 
 
