@@ -133,6 +133,7 @@ class MSGGenerator_4(RunningAverageGenerator):
 
             _conv2d(self.steg_hidden_size, 1)
         )]
+        self.steg_layers = nn.ModuleList(self.steg_layers)
 
 #         return [self.steg_layers]
 
@@ -176,7 +177,7 @@ class MSGGenerator_4(RunningAverageGenerator):
         return x, mask, unet_features
     
     def forward_steg_decoder(self, x):
-        self.steg_layers[0].to(x.device)
+#         self.steg_layers[0].to(x.device)
         x = self.steg_layers[0](x)
 
         if len(self.steg_layers) > 1:
