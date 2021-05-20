@@ -18,13 +18,13 @@ class Hamming74(object):
         self.H2 = torch.tensor([1, 2, 4]).to(device).float()
 
     def encode(self, x):
-        # x: np.array, (kx4,)
-        # output: np.array, (kx7,)
+        # x: torch.tensor, (kx4,)
+        # output: torch.tensor, (kx7,)
         return torch.matmul(x.view(-1, 4).float(), self.G).view(-1).long() % 2
 
     def decode(self, x):
-        # x: np.array, (kx7,)
-        # output: np.array, (kx4,)
+        # x: torch.tensor, (kx7,)
+        # output: torch.tensor, (kx4,)
         x = x.reshape(-1, 7)
         z = torch.matmul(torch.matmul(x.float(), self.H) % 2, self.H2).long()
         xx = torch.where(z > 0)[0]
