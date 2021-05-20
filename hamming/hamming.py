@@ -47,7 +47,8 @@ if __name__ == "__main__":
     print(x)
     y = hamming.encode(x)
     print(y)
-    x[[1, 6, 11, 12]] = -x[[1, 6, 11, 12]]
+    x0 = x.copy()
+    x[[1, 6, 11, 12]] = 1-x[[1, 6, 11, 12]]
     z = hamming.decode(y)
-    print(z)
+    print(z, np.sum(z!=x0))
 
