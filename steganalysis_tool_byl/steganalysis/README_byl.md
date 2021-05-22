@@ -12,6 +12,7 @@ example: python aletheia.py ats hugo-sim 0.4 srm sample_images/alaska2jpg
 Note: for those examples, I have tested them, please be careful about how to use them. 
 you will get results like this:
 
+```
                        LSBR      LSBM  SteganoGAN  HILL *
 ---------------------------------------------------------
 00839_hill.png          0.0      [0.8]     0.0     [1.0]
@@ -26,7 +27,7 @@ you will get results like this:
 74051_hill.png          0.0       0.0      0.0     [0.9]
 74648_lsbm.png         [1.0]     [1.0]     0.0     [0.6]
 74664.png               0.0       0.0      0.0      0.0
-
+```
 
 In the end, please don't forget to cite the original work from the author
 
