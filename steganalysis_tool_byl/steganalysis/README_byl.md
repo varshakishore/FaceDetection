@@ -6,6 +6,8 @@ example: python aletheia.py auto sample_images/alaska2
 ## HiddenNet use ATS, if you want to use it, please run:
 python aletheia.py ats SELECTED_ALGORIGHTM HYPERAMETER( such as 0.4 ) srm DATA_PATH
 
+python aletheia.py SELECTED_TOOL SELECTED_ALGORIGHTM HYPERAMETER( such as 0.4 ) srm DATA_PATH
+
 example: python aletheia.py ats hugo-sim 0.4 srm sample_images/alaska2jpg
 
 
