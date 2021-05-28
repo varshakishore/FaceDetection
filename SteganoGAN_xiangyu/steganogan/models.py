@@ -76,6 +76,7 @@ class SteganoGAN(object):
         self.verbose = verbose
 
         self.data_depth = data_depth
+        print("data_depth", self.data_depth)
         kwargs['data_depth'] = data_depth
         self.encoder = self._get_instance(encoder, kwargs)
         self.decoder = self._get_instance(decoder, kwargs)
@@ -107,7 +108,7 @@ class SteganoGAN(object):
         N, _, H, W = cover.size()
         return torch.zeros((N, self.data_depth, H, W), device=self.device).random_(0, 2)
 
-    def _encode_decode(self, cover, quantize=False):
+    def _encode_decode(self, cover, quantize=False, payload=None):
         """Encode random data and then decode it.
 
         Args:
@@ -119,7 +120,8 @@ class SteganoGAN(object):
             payload (bytes): Random data that has been encoded in the image.
             decoded (bytes): Data decoded from the generated image.
         """
-        payload = self._random_data(cover)
+        if payload is None:
+            payload = self._random_data(cover)
         generated = self.encoder(cover, payload)
         if quantize:
             generated = (255.0 * (generated + 1.0) / 2.0).long()
@@ -223,7 +225,7 @@ class SteganoGAN(object):
             image = sampled / 2.0
             imageio.imwrite(sample_path, (255.0 * image).astype('uint8'))
 
-    def fit(self, train, validate, epochs=5):
+    def fit(self, train, validate, save_path, epochs=5):
         """Train a new model with the given ImageLoader class."""
         print("in fit")
 
@@ -270,6 +272,7 @@ class SteganoGAN(object):
                 torch.cuda.empty_cache()
 
             gc.collect()
+            self.save(save_path)
 
     def _make_payload(self, width, height, depth, text):
         """
