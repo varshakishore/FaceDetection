@@ -17,6 +17,6 @@ pip install torch
 To train the model(s) in the paper, run this command:
 
 ```
-python train.py 
+python train.py --num_bits 3
 ```
 
