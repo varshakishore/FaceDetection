@@ -12,7 +12,7 @@ To install requirements:
 pip install torch
 ```
 
-## Training and Testing
+## Running demo
 
 To train the model(s) in the paper, run this command:
 
