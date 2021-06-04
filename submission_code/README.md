@@ -10,7 +10,11 @@ To install requirements:
 1. Install [CUDA 10.0](https://developer.nvidia.com/cuda-10.0-download-archive) and [cuDNN 7.4.2](https://developer.nvidia.com/rdp/cudnn-archive).
 2. Install conda environment:
     ```sh
-    conda env create -f environment.yml
+    conda create -n rnns python=3.6
+    conda activate rnns
+    conda install pytorch==1.0.1 torchvision==0.2.2 cudatoolkit=10.0 -c pytorch
+    conda install ipykernel imageio tqdm
+    python -m pip install reedsolo
     python -m ipykernel install --user --name=rnns
     ```
 3. Prepare images (we use [DIV2K](https://data.vision.ee.ethz.ch/cvl/DIV2K/) as an example):
@@ -28,6 +32,8 @@ python demo.py --num_bits 3
 ```
 
 ## Results
+
+The following results are also reported in our paper.
 
 Comparison of various flavors of RNNS and SOTA image steganography algorithms on [DIV2K](https://data.vision.ee.ethz.ch/cvl/DIV2K/) dataset.
 <table>
