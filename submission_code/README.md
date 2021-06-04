@@ -27,7 +27,7 @@ python -m ipykernel install --user --name=rnns
 
 ## Running Demo
 
-To use the model in the paper, run this [demo notebook](demo.ipynb)
+To use the model in the paper, run this [demo notebook](demo.ipynb).
 
 ## Results
 
