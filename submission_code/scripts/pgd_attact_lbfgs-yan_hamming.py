@@ -17,8 +17,6 @@ import random
 import tqdm
 import sys
 import torchvision as tv
-sys.path.append('./diffjpeg/')
-import DiffJPEG
 import sys
 import math
 parser = argparse.ArgumentParser()
@@ -708,15 +706,6 @@ class vgg16_2(nn.Module):
 
 
 
-class BasicDecoderJpeg(nn.Module):
-    def __init__(self, num_bits, hidden_size, num_layers, kernel_size, last_norm):
-        super(BasicDecoderJpeg, self).__init__()
-        self.jpeg = DiffJPEG.DiffJPEG(height=448, width=512, differentiable=True, quality=args.quality)
-        self.decoder = BasicDecoder(num_bits, hidden_size=hidden_size, num_layers=num_layers, kernel_size=kernel_size,
-                                    last_norm=last_norm)
-    def forward(self, x):
-        x = self.jpeg(x)
-        return self.decoder(x).contiguous()
 
 def load_model(num_bits, hidden_size, num_layers, kernel_size=3, last_norm=False, do_jpg=False):
     model = BasicDecoder(num_bits, hidden_size=hidden_size, num_layers=num_layers, kernel_size=kernel_size, last_norm=last_norm)
