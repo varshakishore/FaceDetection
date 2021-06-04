@@ -2,26 +2,28 @@
 
 This repository is the official implementation of [Random Neural Network Steganography](https://github.com/varshakishore/rnns). 
 
-<p align="center"><img width="80%" src="mainfigure.png" /></p>
+<p align="center"><img width="80%" src="figures/mainfigure.png" /></p>
 
 ## Requirements
 
 To install requirements:
-1. Install [CUDA 10.0](https://developer.nvidia.com/cuda-10.0-download-archive) and [cuDNN 7.4.2](https://developer.nvidia.com/rdp/cudnn-archive).
-2. Install conda environment:
-    ```sh
-    conda create -n rnns python=3.6
-    conda activate rnns
-    conda install pytorch==1.0.1 torchvision==0.2.2 cudatoolkit=10.0 -c pytorch
-    conda install ipykernel imageio tqdm
-    python -m pip install reedsolo
-    python -m ipykernel install --user --name=rnns
-    ```
-3. Prepare images (we use [DIV2K](https://data.vision.ee.ethz.ch/cvl/DIV2K/) as an example):
-    ```sh
-    wget http://data.vision.ee.ethz.ch/cvl/DIV2K/DIV2K_valid_HR.zip
-    unzip -q DIV2K_valid_HR.zip
-    ```
+```sh
+conda create -n rnns python=3.6
+conda activate rnns
+conda install ipykernel imageio tqdm
+python -m pip install steganogan
+python -m ipykernel install --user --name=rnns
+```
+
+[comment]: <> (3. Prepare images &#40;we use [DIV2K]&#40;https://data.vision.ee.ethz.ch/cvl/DIV2K/&#41; as an example&#41;:)
+
+[comment]: <> (    ```sh)
+
+[comment]: <> (    wget http://data.vision.ee.ethz.ch/cvl/DIV2K/DIV2K_valid_HR.zip)
+
+[comment]: <> (    unzip -q DIV2K_valid_HR.zip)
+
+[comment]: <> (    ```)
 
 ## Running Demo
 
