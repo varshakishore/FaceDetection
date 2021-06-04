@@ -63,6 +63,8 @@ parser.add_argument('--activate', type=str, default='leaky')
 parser.add_argument('--number', type=int, default=5)
 parser.add_argument('--start_idx', type=int, default=1)
 parser.add_argument('--not_early', action='store_true')
+parser.add_argument('--image_path', type=str, default=None)
+
 args = parser.parse_args()
 
 
@@ -725,7 +727,7 @@ def load_model(num_bits, hidden_size, num_layers, kernel_size=3, last_norm=False
 
 
 def load_image(idx, small_size=False):
-    image = f"/home/vk352/FaceDetection/datasets/div2k/val/512//{idx+800:04d}.jpg"
+    image = f"{args.image_path}/{idx+800:04d}.jpg"
     image = np.array(Image.open(image)).astype(np.float32) / 255.0
     image = image[:504, :, :]
     # if small_size:
