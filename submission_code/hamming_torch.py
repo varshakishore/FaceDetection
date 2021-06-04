@@ -2,7 +2,7 @@ import torch
 
 
 class Hamming74(object):
-    def __init__(self, device="cpu"):
+    def __init__(self, device="cuda"):
         self.G = torch.tensor([[1, 1, 0, 1],
                                [1, 0, 1, 1],
                                [1, 0, 0, 0],

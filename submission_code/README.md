@@ -46,20 +46,6 @@ Comparison of various flavors of RNNS and SOTA image steganography algorithms on
     </thead>
     <tbody>
         <tr>
-            <td colspan=2, align='center'><a href="https://papers.nips.cc/paper/2017/file/838e8afb1ca34354ac209f53d90c3a43-Paper.pdf">Deep Steganography</a></td>
-            <td align='center'>1.7%±0.6</td>
-            <td align='center'>3.1%±0.6</td>
-            <td align='center'>5.2%±0.6</td>
-            <td align='center'>10.4%±1.1</td>
-        </tr>
-        <tr>
-            <td colspan=2, align='center'><a href="https://arxiv.org/pdf/1901.03892.pdf">SteganoGAN</a></td>
-            <td align='center'>1.7%±1.0</td>
-            <td align='center'>3.0%±0.9</td>
-            <td align='center'>5.1%±1.3</td>
-            <td align='center'>9.3%±1.8</td>
-        </tr>
-        <tr>
             <td colspan=2, align='center'>RNNS</td>
             <td align='center'>2e-2%±0.1</td>
             <td align='center'>0.2%±0.3</td>
@@ -117,11 +103,22 @@ Performance of RNNS on different datasets with varying values of ε.
 <table>
     <thead>
         <tr>
-            <th></th>
-            <th>BPP</th>
+            <th rowspan=2 align='center'></th>
+            <th rowspan=2 align='center'>BPP</th>
             <td colspan=3, align='center'>ε=0.1</td>
             <td colspan=3, align='center'>ε=0.2</td>
             <td colspan=3, align='center'>ε=0.3</td>
+        </tr>
+        <tr>
+            <th align='center'>Error (%)↓</th>
+            <th align='center'>PSNR (dB)↑</th>
+            <th align='center'>SSIM↑</th>
+            <th align='center'>Error (%)↓</th>
+            <th align='center'>PSNR (dB)↑</th>
+            <th align='center'>SSIM↑</th>
+            <th align='center'>Error (%)↓</th>
+            <th align='center'>PSNR (dB)↑</th>
+            <th align='center'>SSIM↑</th>
         </tr>
     </thead>
     <tbody>

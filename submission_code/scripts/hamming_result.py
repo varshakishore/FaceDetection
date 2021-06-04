@@ -887,6 +887,7 @@ if __name__ == '__main__':
 
                 delta = torch.clamp(adv_image - image, min=-eps, max=eps)
                 adv_image = torch.clamp(image + delta, min=0, max=1).detach()
+
                 if not args.not_early:
                     with torch.no_grad():
                         out1 = (model(adv_image).view(-1)[:lh] > 0).float()
