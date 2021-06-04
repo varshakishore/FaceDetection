@@ -70,4 +70,3 @@ dependencies:
   - zstd=1.4.9=haebb681_0
   - pip:
     - reedsolo==1.5.4
-prefix: /home/xc429/anaconda3/envs/rnns
