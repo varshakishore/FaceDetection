@@ -30,8 +30,7 @@ parser.add_argument('--num_bits', type=int,
                     help='number of bits to hide')
 parser.add_argument('--output_image_path', type=str,
                     help='output image path')
-parser.add_argument('--output_image_path', type=str,
-                    help='output image path')
+
 args = parser.parse_args()
 print(args.name)
 expname = "main100_1"
@@ -187,8 +186,8 @@ for seed in [11111,22222,33333,44444,55555,66666,777777,88888,99999,0]:
     lbfgsimg = (adv_image.cpu().squeeze().permute(2,1,0).numpy()*255).astype(np.uint8)
     if psnr>20: break
 
-os.makedirs(args.output_path, exist_ok = True)
-imname = args.output_path+f'{args.num_bits}_{expname}_{args.name[:-4]}.png'
+os.makedirs(args.output_image_path, exist_ok = True)
+imname = args.output_image_path+f'{args.num_bits}_{expname}_{args.name[:-4]}.png'
 Image.fromarray(lbfgsimg).save(imname)
 
 image_read = imread(imname, pilmode='RGB') / 255.0
