@@ -170,7 +170,6 @@ Performance of RNNS on different datasets with varying values of ε.
             <td align='center'>28.6 (3.66)</td>
             <td align='center'>0.76 (0.15)</td>
         </tr>
-        
         <tr>
             <td rowspan=4, align='center'><a href="http://mmlab.ie.cuhk.edu.hk/projects/CelebA.html">celeba</a></td>
             <td align='center'>1</td>
@@ -220,7 +219,6 @@ Performance of RNNS on different datasets with varying values of ε.
             <td align='center'>32.53 (4.17)</td>
             <td align='center'>0.79 (0.17)</td>
         </tr>
-        
         <tr>
             <td rowspan=4, align='center'><a href="https://cocodataset.org/#home">mscoco</a></td>
             <td align='center'>1</td>
