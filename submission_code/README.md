@@ -21,7 +21,7 @@ To install requirements:
 
 ## Running Demo
 
-To train the model(s) in the paper, run this command:
+To run the model in the paper, run this command:
 
 ```sh
 python demo.py --num_bits 3
