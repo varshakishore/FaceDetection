@@ -149,19 +149,24 @@ def acc_bits1(seq, target):
 
 
 class HammingLoss(torch.nn.modules.loss._Loss):
-    def __init__(self):
+    def __init__(self, C=4):
         super(HammingLoss, self).__init__()
         self.criterion = torch.nn.BCEWithLogitsLoss(reduction='none').cuda()
+        self.C = C
 
     def forward(self, seq, target):
-        correct = acc_bits1((seq > 0).float(), target)
-        index = torch.arange(1, 8)[None, :].repeat(correct.shape[0], 1).contiguous().to(target.device).int()
-        mask = index <= correct[:, None]
-        labels = torch.arange(7)[None, :].repeat(correct.shape[0], 1).float().to(target.device)
-        labels = torch.pow(2, labels)
-        labels[:, 0] = 0
-        labels[~mask] = 0
-        labels = labels.detach()
         loss = self.criterion(seq, target)
+        correct = acc_bits1((seq > 0).float(), target)
+        index = torch.arange(7, 0, -1)[None, :].repeat(correct.shape[0], 1).contiguous().to(target.device).int()
+        mask = correct[:, None] >= index
+        labels = torch.arange(7)[None, :].repeat(correct.shape[0], 1).float().to(target.device)
+        labels = torch.pow(self.C, labels)
+        labels[mask] = 1
+        labels[:, 0] = 0
+        # normalize
+        labels = (labels / labels.sum()) * labels.numel()
+        labels = labels.detach()
+        num_zeros = (loss == 0).sum().item()
+        loss[loss == 0] += (torch.rand(num_zeros) * 1e-10).to('cuda')
         loss = torch.sort(loss.view(-1, 7), dim=-1, descending=True)
         return torch.sum(loss[0] * labels)
