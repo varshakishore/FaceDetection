@@ -11,7 +11,7 @@ To install requirements:
 conda create -n rnns python=3.6
 conda activate rnns
 conda install ipykernel imageio tqdm
-python -m pip install steganogan
+python -m pip install steganogan opencv-python
 python -m ipykernel install --user --name=rnns
 ```
 

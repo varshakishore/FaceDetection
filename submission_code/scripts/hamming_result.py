@@ -716,7 +716,7 @@ def load_model(num_bits, hidden_size, num_layers, kernel_size=3, last_norm=False
 
 
 def load_image(idx, small_size=False):
-    image = f"{args.image_path}/{idx+800:04d}.jpg"
+    image = f"{args.image_path}/{idx+800:04d}.png"
     image = np.array(Image.open(image)).astype(np.float32) / 255.0
     image = image[:504, :, :]
     # if small_size:
