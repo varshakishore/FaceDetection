@@ -98,7 +98,7 @@ Comparison of various flavors of RNNS and SOTA image steganography algorithms on
     </tbody>
 </table>
 
-Performance of RNNS on different datasets with varying values of ε.
+Performance of RNNS on different datasets (without the use of hamming codes) with varying values of ε.
 
 <table>
     <thead>
