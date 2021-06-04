@@ -27,11 +27,7 @@ python -m ipykernel install --user --name=rnns
 
 ## Running Demo
 
-To run the model in the paper, run this command:
-
-```sh
-python demo.py --num_bits 3
-```
+To use the model in the paper, run this [demo notebook](demo.ipynb)
 
 ## Results
 
