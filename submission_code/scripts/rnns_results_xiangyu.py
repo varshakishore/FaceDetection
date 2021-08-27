@@ -31,14 +31,18 @@ parser.add_argument('--num_bits', type=int,
 parser.add_argument('--output_image_path', type=str,
                     help='output image path')
 parser.add_argument('--pretrained', action="store_true")
+parser.add_argument('--psnr_weight', type=float, default=0.5)
+
 
 args = parser.parse_args()
 print(args.name)
 expname = "main100_1"
 
+
 def flatten(image, dim=3):
     img = torch.cat(torch.split(image, 1, dim=1), dim=dim)
     return img
+
 
 def shuffle_params(m):
     if type(m)==nn.Conv2d or type(m)==nn.BatchNorm2d:
@@ -47,6 +51,7 @@ def shuffle_params(m):
         
         param = m.bias
         m.bias.data = nn.Parameter(torch.zeros(len(param.view(-1))).float().reshape(param.shape))
+
 
 class normLayer(nn.Module):
     def __init__(self):
@@ -60,7 +65,6 @@ class normLayer(nn.Module):
         x = x - mean.reshape([1, c, 1, 1])
         x = x / (std + 1e-7).reshape([1,c,1,1])
         return x
-
 
 
 class BasicDecoder(nn.Module):
@@ -118,9 +122,9 @@ class BasicDecoder(nn.Module):
 
         return x
 
-hidden_size=128
-criterion = torch.nn.BCEWithLogitsLoss(reduction='sum')
 
+hidden_size = 128
+criterion = torch.nn.BCEWithLogitsLoss(reduction='sum')
 
 # models
 pretrained = args.pretrained
@@ -129,17 +133,26 @@ steps = 2000
 max_iter = 20
 alpha = 0.1
 eps = 0.105
+psnr_weight = args.psnr_weight
+
+
+def psnr_loss(img1, img2):
+    weight = torch.tensor([65.738, 129.057, 25.064]).view(1, 3, 1, 1) / 256.0
+    diff = torch.sum((img1 - img2) * weight.to(img1.device), dim=1)
+    return 10 * torch.log10(torch.norm(diff))
+
 
 for seed in [11111,22222,33333,44444,55555,66666,777777,88888,99999,0]:
     if pretrained:
         steganogan = SteganoGAN.load(path=f"demo_{args.num_bits}.1.steg", cuda=True, verbose=True)
         model = steganogan.decoder
     else:
+        print("Using basic decoder")
         np.random.seed(seed)
         model = BasicDecoder(args.num_bits, hidden_size=hidden_size)
         model.apply(shuffle_params)
         model.to('cuda')
-    print(model)
+    # print(model)
 
     image = args.dataset_path + args.name
     image = imread(image, pilmode='RGB') / 255.0
@@ -149,12 +162,13 @@ for seed in [11111,22222,33333,44444,55555,66666,777777,88888,99999,0]:
     image = image.to('cuda')
     if flatten_image:
         image = flatten(image, 3)
+    num_pixels = image.shape[2] * image.shape[3]
     out = model(image)
 
     torch.manual_seed(int(args.name[:-4]))
     target = torch.bernoulli(torch.empty(out.shape).uniform_(0, 1)).to(out.device)
     print(target.shape)
-    eps = eps-0.0005
+    eps = eps - 0.0005
     print("eps:", eps)
     adv_image = image.clone().detach()
     
@@ -167,6 +181,10 @@ for seed in [11111,22222,33333,44444,55555,66666,777777,88888,99999,0]:
         def closure():
             outputs = model(adv_image)
             loss = criterion(outputs, target)
+            if psnr_weight > 0:
+                pl = psnr_loss(adv_image, image) * num_pixels * psnr_weight
+                # print(loss, pl)
+                loss += pl
 
             optimizer.zero_grad()
             loss.backward()
@@ -178,15 +196,19 @@ for seed in [11111,22222,33333,44444,55555,66666,777777,88888,99999,0]:
 
         acc = len(torch.nonzero((model(adv_image)>0).float().view(-1) != target.view(-1))) / target.numel()
 #             print(i, acc)
-        if acc==0: break
+        if acc == 0:
+            break
     end = time.time()
+
+    print(f"used {end-start:0.3f} seconds.")
     print(seed)
     psnr = calc_psnr((image.squeeze().permute(2,1,0)*255).detach().cpu().numpy(), (adv_image.squeeze().permute(2,1,0)*255).detach().cpu().numpy())
-    print("psnr:",psnr)
-    print("ssim:",calc_ssim((image.squeeze().permute(2,1,0)*255).detach().cpu().numpy(), (adv_image.squeeze().permute(2,1,0)*255).detach().cpu().numpy()))
+    print("psnr:", psnr)
+    print("ssim:", calc_ssim((image.squeeze().permute(2,1,0)*255).detach().cpu().numpy(), (adv_image.squeeze().permute(2,1,0)*255).detach().cpu().numpy()))
     print("error:", acc)
     lbfgsimg = (adv_image.cpu().squeeze().permute(2,1,0).numpy()*255).astype(np.uint8)
-    if psnr>20: break
+    if psnr > 20:
+        break
 
 os.makedirs(args.output_image_path, exist_ok = True)
 imname = args.output_image_path+f'{args.num_bits}_{expname}_{args.name[:-4]}.png'
