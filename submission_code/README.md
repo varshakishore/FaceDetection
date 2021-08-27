@@ -1,6 +1,6 @@
 # Random Neural Network Steganography
 
-This repository is the official implementation of [Random Neural Network Steganography](https://github.com/varshakishore/rnns) (RNNS), which reliably and effectively hides messages in images using a randomly initialized network and doesn't have to be trained.
+This repository is the official implementation of [Random Neural Network Steganography](https://github.com/varshakishore/rnns) (RNNS), which reliably and effectively hides messages in images using a randomly initialized network that doesn't have to be trained.
 
 <p align="center"><img width="80%" src="figures/mainfigure.png" /></p>
 
