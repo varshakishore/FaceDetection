@@ -175,4 +175,7 @@ class BCELogitsPenalty(GanCriterion):
         to_log = dict(
             bce_logits_penalty=bce_logits_penalty.mean().detach()
         )
+#         print("BCE Loss:", bce_logits_penalty.mean().detach())
+#         import pdb; pdb.set_trace()
+#         print(((torch.sigmoid(message_decode)>0)==message_original).float().mean())
         return bce_logits_penalty.view(-1), to_log
